@@ -48,3 +48,35 @@ public DataSet GetDataSetFromAdapter(
   return dataSet;
 }
 
+
+// Note: the following example is a error based sqlInjecton on the site http://testphp.vulnweb.com
+
+http://testphp.vulnweb.com/listproducts.php?cat=1+OR+1=1
+
+http://testphp.vulnweb.com/listproducts.php?cat=1+AND+1=(SELECT+COUNT(*)+FROM+testtable)
+// Error: Table 'acuart.testtable' doesn't exist Warning: mysql_fetch_array()
+// expects parameter 1 to be resource, boolean given in /hj/var/www/listproducts.php on line 74
+
+http://testphp.vulnweb.com/listproducts.php?cat=1+AND+1=(SELECT+COUNT(*)+FROM+products)
+// no error means the table exists
+
+
+http://testphp.vulnweb.com/listproducts.php?cat=1;+DELETE+FROM+cat+WHERE+id=1
+Error: You have an error in your SQL syntax; 
+check the manual that corresponds to your MySQL server version for 
+the right syntax to use near 'DELETE FROM cat WHERE id=1 --' at line 1 Warning: mysql_fetch_array() 
+expects parameter 1 to be resource, boolean given in /hj/var/www/listproducts.php on line 74
+
+// already we get a lot of information about the server structure like the path /hj/var/www/listproducts.ph
+
+// Fix 
+// The fix works the same way but thistime we will use php 
+
+$stmt = $dbConnection->prepare('SELECT * FROM products WHERE id = ?');
+$stmt->bind_param('i', $id); // 'i' specifies the variable type => 'integer'
+$stmt->execute();
+
+$result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
+    // Do something with $row
+}
