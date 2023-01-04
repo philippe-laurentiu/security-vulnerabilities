@@ -24,9 +24,6 @@ http://testaspnet.vulnweb.com/Comments.aspx?id=0;+DELETE+FROM+comments+WHERE+1=1
 // To avoid Sql Inject use parameterized queries with bind variables
 // since we are dealing with .NET It should be like this (there is a bit of guessing because I don't know the actual querry and never wrote .NET)
 
-// id = ? don't insert variables directly into the query
-
-
 public DataSet GetDataSetFromAdapter(
   DataSet dataSet, string connectionString, integer id)
 {
