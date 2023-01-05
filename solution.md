@@ -6,26 +6,25 @@ http://testaspnet.vulnweb.com/Comments.aspx?id=1
 <br>
 
 ### Problem:
-The automatic analysis tools indicated that an SQL injection is possible at the parameter id.
-SQL injections may grant us access to data we are not supposed to see or even alter them on the database.
+The automatic analysis tools indicated that an SQL injection is possible at the parameter id. SQL injections may grant us access to data we are not supposed to see or even alter on the database.
 <br>
 <br>
 
 ### Exploit example (Inferential SQL injection): 
-In this case we can exploit the comments table of the http://testaspnet.vulnweb.com/ database with an Inferential SQL injection
+In this case, we can exploit the comments table of the http://testaspnet.vulnweb.com/ database with an Inferential SQL injection.
 
 1. Table guessing: <br>
-since we don't know the names of the table on the remote database we can use a query like: http://testaspnet.vulnweb.com/Comments.aspx?id=1+AND+1=(SELECT+COUNT(*)+FROM+comments) his query will cause ether an error or return a result depending on wether or not the table users exists this way we figured out that the table with the name comments exists on the database 
+since we don't know the names of the table on the remote database, we can use a query like: http://testaspnet.vulnweb.com/Comments.aspx?id=1+AND+1=(SELECT+COUNT(*)+FROM+comments) his query, will cause either an error or return a result depending on whether or not the table users exists this way we figured out that the table with the name comments exists on the database. 
 
 2. Table manipulation: <br>
-at this part I tried to drop or truncate the table which didn't work but the following delete query was successful and all comments on the server where deleted http://testaspnet.vulnweb.com/Comments.aspx?id=0;+DELETE+FROM+comments+WHERE+1=1
+At this part, I tried to drop or truncate the table which didn't work but the following delete query was successful and all comments on the server had been deleted http://testaspnet.vulnweb.com/Comments.aspx?id=0;+DELETE+FROM+comments+WHERE+1=1
 <br>
 <br>
 
 ### Fix: 
 To avoid SQL Injections use parameterized queries with bind variables.
 
-since we are dealing with .NET It should be like this (there is a bit of guessing because I don't know the actual query and never wrote .NET)
+Since we are dealing with .NET It should be like this (there is a bit of guessing because I don't know the actual query and never wrote .NET)
 
 ``` java
 public DataSet GetDataSetFromAdapter( 
@@ -36,7 +35,7 @@ public DataSet GetDataSetFromAdapter(
   {
       // The important part is that we define the id 
       // with ? and then use OleDbType.Integer as a type
-      // so all other imput will be result in an error
+      // so all other input will result in an error
       queryString = "SELECT * FROM comments WHERE id = ?"
       OleDbDataAdapter adapter = 
       new OleDbDataAdapter(queryString, connection);
@@ -59,8 +58,8 @@ public DataSet GetDataSetFromAdapter(
 <br>
 <br>
 
-### Secound SQL injection (error based): 
-The following example is an error based SQL injecton on the site http://testphp.vulnweb.com 
+### Second SQL injection (error based): 
+The following example is an error-based SQL injection on the site http://testphp.vulnweb.com 
 <br>
 <br>
 
@@ -93,12 +92,12 @@ expects parameter 1 to be resource, boolean given in /hj/var/www/listproducts.ph
 <br>
 
 ### Conclusion: 
-already we get a lot of information about the server structure like the path /hj/var/www/listproducts.ph. This information can be used for other attacks like Path Traversal on http://testphp.vulnweb.com/showimage.php?file=/hj/var/www/listproducts.php
+already we get a lot of information about the server structure, like the path "/hj/var/www/listproducts.ph". This information can be used for other attacks like Path Traversal on http://testphp.vulnweb.com/showimage.php?file=/hj/var/www/listproducts.php
 <br>
 <br>
 
 ### Fix:
-The fix works the same way but this time we will use php 
+The fix works the same way but this time we will use PHP 
 
 ``` php
 $stmt = $dbConnection->prepare('SELECT * FROM products WHERE id = ?');
@@ -123,12 +122,12 @@ http://testaspnet.vulnweb.com/Comments.aspx?id=0
 <br>
 
 ### Problem:
-The comment section allowes a Stored XSS (AKA Persistent or Type II attack). This securety breach allow mallicios code to be stored permanently on the website. 
+The comment section allows a Stored XSS (AKA Persistent or Type II attack). This security breach allows malicious code to be stored permanently on the website.
 <br>
 <br>
 
-### Exployed example:
-We simply add some JS code in the comment this code will run on all clients who read the comments. A good example is a loggin popup like follows
+### Exploit example:
+We simply add some JS code in the comment this code will run on all clients who read the comments. A good example is a login popup like follows
 
 ``` javascript
 <script>
@@ -147,14 +146,14 @@ or thrugh the html rendering
 <br>
 
 ### Fix:
-The first approach is to set the Content Security Policy (CSP) which is an added layer of security that helps to detect and mitigate XSS attacs. A valid policy to only allow same origin would be:
+The first approach is to set the Content Security Policy (CSP) which is an added layer of security that helps to detect and mitigate XSS attacks. A valid policy to only allow the same origin would be:
 
 ``` 
 Content-Security-Policy: default-src 'self'
 ```
 
-There are several ways to compromise the CSP so it't is necessary to 
-sanitize the data on the server wich would look like:
+There are several ways to compromise the CSP so it is necessary to 
+sanitize the data on the server which would look like:
 
 1. The site http://testaspnet.vulnweb.com semes to use .net so the sanitizing will be some like 
 ``` java
@@ -173,7 +172,7 @@ let data = sanitizer.value(req.data, 'string');
 
 ### Notes: 
 
-Since the Stored XSS have the highest harm potential I used it as an example. But you can find reflected XSS (AKA Non-Persistent or Type I) vulnarabilitys too.
+Since the Stored XSS have the highest harm potential I used it as an example. But you can find reflected XSS (AKA Non-Persistent or Type I) vulnerabilities too.
 <br>
 <br>
 
@@ -198,11 +197,11 @@ http://testhtml5.vulnweb.com/#/popular
 <br>
 <br>
 ### Problem:
-After the login action the system will set the usernam cookie, this cookie omits the HTTPOnlyCookie flag. If the HttpOnlyCookie is not set javascript will have access to this cookie 
+After the login action, the system will set the usernam cookie. This cookie omits the HTTPOnlyCookie flag. If the HttpOnlyCookie is not set, javascript will have access to this cookie 
 
 
 ### Exployed example:
-If the website has other flaws like possible XSS weeknesses the hacker could run malicious code on the client. The code can access the cooke and send the information to a malicious endpoint
+If the website has other flaws like XSS weaknesses, the hacker could run malicious code on the client. The code can access the cookie and send the information to a malicious endpoint
 
 ``` javascript
 const cookie = document.cookie;
