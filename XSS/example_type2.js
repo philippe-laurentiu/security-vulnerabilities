@@ -22,7 +22,7 @@
 
 // 1
 // The site http://testaspnet.vulnweb.com semes to use .net so the sanitizing will be something like 
-// String Data = AntiXss.HtmlEncode(Request.QueryString["Data"]);
+String Data = AntiXss.HtmlEncode(Request.QueryString["Data"]);
 
 // 2
 // For a node aplication you could install the sanitizer module 
